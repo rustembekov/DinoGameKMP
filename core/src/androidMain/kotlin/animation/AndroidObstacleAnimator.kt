@@ -39,7 +39,7 @@ class AndroidObstacleAnimator : ObstacleAnimator {
                     speed = 3f,
                     useFrameInterpolation = false,
                     playMode = Mode.FORWARD,
-                    modifier = Modifier.background(Color.LightGray)
+                    modifier = Modifier.background(Color.Transparent)
                 )
             }
 
@@ -62,7 +62,6 @@ class AndroidObstacleAnimator : ObstacleAnimator {
     }
 
 }
-
 
 @Preview(showBackground = true)
 @Composable

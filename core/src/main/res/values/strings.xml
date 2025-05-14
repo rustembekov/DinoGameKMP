@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="restart">Tap to Restart</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="score_text">Score: %1$d</string>
+    <string name="high_score_text">High Score: %1$d</string>
+    <string name="jump">Jump %1$d%%</string>
+</resources>
