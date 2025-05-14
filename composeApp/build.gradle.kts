@@ -65,6 +65,7 @@ kotlin {
                 implementation(libs.compose.ui.tooling)
                 implementation(libs.material)
                 implementation(libs.lottie.compose)
+                implementation("androidx.activity:activity-compose:1.8.0")
 
                 implementation(projects.shared)
                 implementation(projects.core)
