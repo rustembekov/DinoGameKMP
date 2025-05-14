@@ -1,0 +1,112 @@
+# Kotlin
+*.class
+*.jar
+*.war
+*.ear
+
+# Kotlin Multiplatform
+/build/
+/.idea/
+/.gradle/
+/.kotlinc/
+/out/
+/node_modules/
+/dist/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+*.log
+
+# VS Code (if used)
+.vscode/
+
+# Android
+*.apk
+*.ap_
+*.dex
+*.class
+*.so
+*.apk
+*.keystore
+*.jks
+*.cxx/
+*.DS_Store
+.gradle/
+local.properties
+captures/
+output.json
+.idea/libraries/
+.externalNativeBuild/
+.cxx/
+
+# iOS / Xcode (if you use Kotlin/Native with iOS)
+*.mode1v3
+*.mode2v3
+*.pbxuser
+*.xcuserstate
+*.xcworkspace
+DerivedData/
+build/
+*.hmap
+*.ipa
+Pods/
+Podfile.lock
+project.xcworkspace/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# JetBrains cache
+.idea/
+*.iws
+*.iml
+*.ipr
+.idea_modules/
+
+# Misc
+*.swp
+*.swo
+*.tmp
+*.temp
+*.log
+npm-debug.log*
+
+# Gradle
+.gradle/
+build/
+!gradle-wrapper.jar
+gradle-app.setting
+
+# Ignore local Kotlin compile caches
+.kotlinc/
+
+# Ignore generated files
+/generated/
+
+# Ignore logs
+*.log
+
+# Ignore local properties
+local.properties
+
+# Ignore test reports
+test-results/
+reports/
+
+# Ignore Firebase files (optional)
+.firebase/
+
+# Ignore Compose previews (optional)
+.idea/preview.html
