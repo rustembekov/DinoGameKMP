@@ -3,14 +3,7 @@ package ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -19,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,100 +35,215 @@ fun GameCanvas(
 ) {
     val dinoAnimator: DinoAnimator = remember { AndroidDinoAnimator() }
     val obstacleAnimator: ObstacleAnimator = remember { AndroidObstacleAnimator() }
+    val density = LocalDensity.current
 
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFFF8F8F8))
             .pointerInput(state.isGameOver) {
                 detectTapGestures(onTap = {
                     if (state.isGameOver) onRestart() else onJump()
                 })
             }
     ) {
+        val screenWidth = constraints.maxWidth.toFloat()
         val screenHeight = constraints.maxHeight.toFloat()
         val groundY = screenHeight - state.groundHeight
 
-        // Draw ground
+
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawOval(
+                color = Color(0xFFE0E0E0),
+                topLeft = Offset(screenWidth * 0.1f, screenHeight * 0.15f),
+                size = androidx.compose.ui.geometry.Size(screenWidth * 0.22f, screenHeight * 0.06f)
+            )
+
+            drawOval(
+                color = Color(0xFFE0E0E0),
+                topLeft = Offset(screenWidth * 0.6f, screenHeight * 0.1f),
+                size = androidx.compose.ui.geometry.Size(screenWidth * 0.25f, screenHeight * 0.06f)
+            )
+
+            drawOval(
+                color = Color(0xFFE0E0E0),
+                topLeft = Offset(screenWidth * 0.4f, screenHeight * 0.25f),
+                size = androidx.compose.ui.geometry.Size(screenWidth * 0.15f, screenHeight * 0.04f)
+            )
+        }
+
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawLine(
-                color = Color.Black,
+                color = Color(0xFF424242),
                 start = Offset(0f, groundY),
                 end = Offset(size.width, groundY),
                 strokeWidth = 4f
             )
-        }
 
-        // Draw Dino
-        val dinoHeightDp = state.dino.height.dp
-        dinoAnimator.Dino(
-            modifier = Modifier
-                .size(width = state.dino.width.dp, height = dinoHeightDp)
-                .offset(
-                    x = state.dino.x.dp,
-                    y = (groundY - state.dino.height - state.dino.y).dp // align Dino bottom to ground
+            for (i in 0 until screenWidth.toInt() step 40) {
+                drawLine(
+                    color = Color(0xFF757575),
+                    start = Offset(i.toFloat(), groundY + 2),
+                    end = Offset(i.toFloat() + 15, groundY + 2),
+                    strokeWidth = 2f
                 )
-        )
+            }
 
-        // Draw Obstacles
-        state.obstacles.forEach { obstacle ->
-            obstacleAnimator.Obstacle(
-                modifier = Modifier
-                    .size(width = obstacle.width.dp, height = obstacle.height.dp)
-                    .offset(
-                        x = obstacle.x.dp,
-                        y = (groundY - obstacle.height - obstacle.y).dp
-                    ),
-                type = obstacle.type
-            )
+            for (i in 10 until screenWidth.toInt() step 120) {
+                val detailWidth = (Math.random() * 10 + 5).toFloat()
+                drawLine(
+                    color = Color(0xFF9E9E9E),
+                    start = Offset(i.toFloat(), groundY + 4),
+                    end = Offset(i.toFloat() + detailWidth, groundY + 4),
+                    strokeWidth = 1.5f
+                )
+            }
         }
 
-        // Scoreboard
+        Box(
+            modifier = Modifier
+                .width(with(density) { state.dino.width.toDp() })
+                .height(with(density) { state.dino.height.toDp() })
+                .offset(
+                    x = with(density) { state.dino.x.toDp() },
+                    y = with(density) { (groundY - state.dino.height - state.dino.y).toDp() }
+                )
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                dinoAnimator.Dino(
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+
+        state.obstacles.forEach { obstacle ->
+            Box(
+                modifier = Modifier
+                    .width(with(density) { obstacle.width.toDp() })
+                    .height(with(density) { obstacle.height.toDp() })
+                    .offset(
+                        x = with(density) { obstacle.x.toDp() },
+                        y = with(density) { (groundY - obstacle.height - obstacle.y).toDp() }
+                    )
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    obstacleAnimator.Obstacle(
+                        modifier = Modifier.fillMaxSize(),
+                        type = obstacle.type
+                    )
+                }
+            }
+        }
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .fillMaxWidth()
+                .padding(top = 24.dp, start = 24.dp, end = 24.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            Text("Score: ${state.score}", fontSize = 20.sp, color = Color.Black)
-            Text("High Score: ${state.highScore}", fontSize = 16.sp, color = Color.DarkGray)
+            Text(
+                "Score: ${state.score}",
+                fontSize = 28.sp,
+                color = Color(0xFF212121),
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                "High Score: ${state.highScore}",
+                fontSize = 20.sp,
+                color = Color(0xFF616161),
+                fontWeight = FontWeight.Medium
+            )
         }
 
-        // Game Over UI
+        if (state.dino.isJumping) {
+            val jumpHeightPercent = (state.dino.y / screenHeight * 100).toInt()
+            Text(
+                text = "Jump: $jumpHeightPercent%",
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 24.dp, end = 24.dp),
+                fontSize = 18.sp,
+                color = Color(0xFF424242),
+                fontWeight = FontWeight.Medium
+            )
+        }
+
         if (state.isGameOver) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 100.dp),
+                    .background(Color(0x99000000)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Game Over\nTap to Restart",
-                    color = Color.Red,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "GAME OVER",
+                        color = Color.White,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Score: ${state.score}",
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = Color(0xFFFF5722),
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 36.dp, vertical = 18.dp)
+                    ) {
+                        Text(
+                            text = "Tap to Restart",
+                            color = Color.White,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun GameCanvasPreview() {
+private fun GameCanvasPreview() {
     val mockDino = Dino(
         x = 100f,
-        y = 0f,
-        velocityY = 0f,
-        isJumping = false
+        y = 50f,  // Show dino mid-jump in preview
+        velocityY = 10f,
+        width = GameConstants.DINO_WIDTH,
+        height = GameConstants.DINO_HEIGHT,
+        isJumping = true
     )
 
     val mockObstacles = listOf(
-        Obstacle(x = 300f, y = 0f, type = ObstacleType.BIRD),
-        Obstacle(x = 600f, y = 0f, type = ObstacleType.TREE)
+        Obstacle(
+            x = 300f,
+            y = 150f,
+            width = GameConstants.OBSTACLE_WIDTH,
+            height = GameConstants.OBSTACLE_HEIGHT,
+            type = ObstacleType.BIRD
+        ),
+        Obstacle(
+            x = 700f,
+            y = 0f,
+            width = GameConstants.OBSTACLE_WIDTH,
+            height = GameConstants.OBSTACLE_HEIGHT,
+            type = ObstacleType.TREE
+        )
     )
 
     val mockState = GameState(
@@ -142,7 +251,8 @@ fun GameCanvasPreview() {
         obstacles = mockObstacles,
         score = 42,
         highScore = 100,
-        isGameOver = false
+        isGameOver = false,
+        groundHeight = GameConstants.GROUND_HEIGHT
     )
 
     GameCanvas(

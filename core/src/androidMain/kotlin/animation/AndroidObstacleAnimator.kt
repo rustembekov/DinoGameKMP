@@ -7,19 +7,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
-
 import com.example.dino.core.R as AppR
 import entity.ObstacleType
 
 class AndroidObstacleAnimator : ObstacleAnimator {
     @Composable
     override fun Obstacle(modifier: Modifier, type: ObstacleType) {
+        if (LocalInspectionMode.current) {
+
+            val color = when (type) {
+                ObstacleType.TREE -> Color(0xFF8B4513) // Brown for tree
+                ObstacleType.BIRD -> Color(0xFF4682B4) // Blue for bird
+            }
+            Box(modifier = modifier.background(color))
+            return
+        }
+
         when (type) {
             ObstacleType.TREE -> {
                 DotLottieAnimation(
@@ -29,13 +39,13 @@ class AndroidObstacleAnimator : ObstacleAnimator {
                     speed = 3f,
                     useFrameInterpolation = false,
                     playMode = Mode.FORWARD,
-                    modifier = modifier.background(Color.LightGray)
+                    modifier = Modifier.background(Color.LightGray)
                 )
             }
 
             ObstacleType.BIRD -> {
                 val composition by rememberLottieComposition(
-                    LottieCompositionSpec.RawRes(AppR.raw.bird) // R.raw.bird must exist
+                    LottieCompositionSpec.RawRes(AppR.raw.bird)
                 )
                 val progress by animateLottieCompositionAsState(
                     composition,
@@ -50,21 +60,21 @@ class AndroidObstacleAnimator : ObstacleAnimator {
             }
         }
     }
+
 }
 
 
-
-//@Preview(showBackground = true)
-//@Composable
-//private fun ObstacleBirdPreview() {
-//    val obstacleAnimator = AndroidObstacleAnimator()
-//    Box(modifier = Modifier.size(100.dp)) {
-//        obstacleAnimator.Obstacle(
-//            modifier = Modifier,
-//            type = ObstacleType.BIRD
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+private fun ObstacleBirdPreview() {
+    val obstacleAnimator = AndroidObstacleAnimator()
+    Box(modifier = Modifier.size(100.dp)) {
+        obstacleAnimator.Obstacle(
+            modifier = Modifier,
+            type = ObstacleType.BIRD
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

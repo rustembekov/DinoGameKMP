@@ -1,7 +1,7 @@
 package entity
 
 data class Dino(
-    var x: Float = 50f,
+    var x: Float = 150f,
     var y: Float = 0f,
     var velocityY: Float = 0f,
     val width: Float = GameConstants.DINO_WIDTH,
@@ -17,7 +17,6 @@ data class GameState(
     val isGameOver: Boolean = false,
     val groundHeight: Float = GameConstants.GROUND_HEIGHT
 )
-
 
 data class Obstacle(
     var x: Float,

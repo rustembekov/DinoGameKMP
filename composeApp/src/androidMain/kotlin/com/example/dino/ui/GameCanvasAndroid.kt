@@ -13,7 +13,6 @@ import ui.GameCanvas
 import viewmodel.GameIntent
 import viewmodel.GameViewModelInterface
 
-
 @Composable
 fun DinoGameScreenAndroid(viewModel: GameViewModelInterface) {
     val state by viewModel.state.collectAsState()
