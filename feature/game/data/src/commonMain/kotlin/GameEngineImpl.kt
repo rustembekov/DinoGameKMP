@@ -47,7 +47,6 @@ class GameEngineImpl : GameEngineRepository {
             }
 
             val obstacleY = if (type == ObstacleType.BIRD) {
-
                 val heights = listOf(100f, 200f, 300f)
                 heights.random()
             } else {
@@ -68,24 +67,65 @@ class GameEngineImpl : GameEngineRepository {
             movedObstacles
         }
 
-        val collisionBufferX = updatedDino.width * 0.15f
-        val collisionBufferY = updatedDino.height * 0.15f
+        val dinoCollisionBufferX = updatedDino.width * 0.15f
+        val dinoCollisionBufferY = updatedDino.height * 0.15f
 
         val collision = nextObstacles.any { obstacle ->
-            val dinoLeft = updatedDino.x + collisionBufferX
-            val dinoRight = updatedDino.x + updatedDino.width - collisionBufferX
-            val dinoTop = updatedDino.y + collisionBufferY
-            val dinoBottom = updatedDino.y + updatedDino.height - collisionBufferY
+            // Dino collision box
+            val dinoLeft = updatedDino.x + dinoCollisionBufferX
+            val dinoRight = updatedDino.x + updatedDino.width - dinoCollisionBufferX
+            val dinoTop = updatedDino.y + dinoCollisionBufferY
+            val dinoBottom = updatedDino.y + updatedDino.height - dinoCollisionBufferY
 
-            val obstacleLeft = obstacle.x + collisionBufferX
-            val obstacleRight = obstacle.x + obstacle.width - collisionBufferX
-            val obstacleTop = obstacle.y + collisionBufferY
-            val obstacleBottom = obstacle.y + obstacle.height - collisionBufferY
+            when (obstacle.type) {
+                ObstacleType.TREE -> {
+                    val collisionWidth = obstacle.width * GameConstants.TREE_COLLISION_WIDTH_FACTOR
+                    val collisionHeight = obstacle.height * GameConstants.TREE_COLLISION_HEIGHT_FACTOR
+                    val widthMargin = (obstacle.width - collisionWidth) / 2
 
-            val xOverlap = dinoRight > obstacleLeft && dinoLeft < obstacleRight
-            val yOverlap = dinoBottom > obstacleTop && dinoTop < obstacleBottom
+                    val obstacleLeft = obstacle.x + widthMargin + GameConstants.TREE_COLLISION_X_OFFSET
+                    val obstacleRight = obstacleLeft + collisionWidth
+                    val obstacleTop = obstacle.y
+                    val obstacleBottom = obstacleTop + collisionHeight
 
-            xOverlap && yOverlap
+                    val xOverlap = dinoRight > obstacleLeft && dinoLeft < obstacleRight
+                    val yOverlap = dinoBottom > obstacleTop && dinoTop < obstacleBottom
+
+                    xOverlap && yOverlap
+                }
+
+                ObstacleType.BIRD -> {
+                    val birdHeight = obstacle.y
+                    val collisionWidth = obstacle.width * GameConstants.BIRD_COLLISION_WIDTH_FACTOR
+                    val collisionHeight = obstacle.height * GameConstants.BIRD_COLLISION_HEIGHT_FACTOR
+                    val widthMargin = (obstacle.width - collisionWidth) / 2
+
+                    val obstacleLeft = obstacle.x + widthMargin
+                    val obstacleRight = obstacleLeft + collisionWidth
+
+                    val birdBottom = birdHeight + collisionHeight
+
+                    val xOverlap = dinoRight > obstacleLeft && dinoLeft < obstacleRight
+
+                    val yOverlap = when (birdHeight.toInt()) {
+                        100 -> dinoBottom > birdHeight && dinoTop < birdBottom
+
+                        200 -> {
+                            val dinoJumpHeight = updatedDino.y
+                            dinoJumpHeight in 100f..300f && dinoBottom > birdHeight && dinoTop < birdBottom
+                        }
+
+                        300 -> {
+                            val dinoJumpHeight = updatedDino.y
+                            dinoJumpHeight > 200f && dinoBottom > birdHeight && dinoTop < birdBottom
+                        }
+
+                        else -> dinoBottom > birdHeight && dinoTop < birdBottom
+                    }
+
+                    xOverlap && yOverlap
+                }
+            }
         }
 
         val newScore = state.score + 1
