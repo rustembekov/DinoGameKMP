@@ -5,7 +5,8 @@ import entity.ObstacleType
 class GameEngineImpl : GameEngineRepository {
     private var obstacleSpawnTimer = 0
     private var difficultyMultiplier = 1.0f
-    private var lastObstacleX = 0f
+    private var screenWidth = 800f
+    private val spawnOffset = 100f
 
     override fun update(state: GameState): GameState {
         difficultyMultiplier = 1.0f + (state.score / 1500f).coerceAtMost(1.5f)
@@ -23,21 +24,22 @@ class GameEngineImpl : GameEngineRepository {
         val obstacleSpeed = GameConstants.OBSTACLE_SPEED * difficultyMultiplier
         val movedObstacles = state.obstacles.map {
             it.copy(x = it.x - obstacleSpeed)
-        }.filter { it.x + it.width > 0 }
+        }.filter { it.x + it.width > -50 }
 
         val baseSpawnRate = GameConstants.INITIAL_SPAWN_DELAY
         val spawnRateReduction = (state.score / 500).coerceIn(0, 40)
         val spawnRate = (baseSpawnRate - spawnRateReduction).coerceAtLeast(60)
 
-        val rightmostObstacleX = movedObstacles.maxOfOrNull { it.x + it.width } ?: 0f
+        val rightmostObstacle = movedObstacles.maxByOrNull { it.x }
+        val rightmostObstacleX = rightmostObstacle?.x ?: 0f
+        val minDistanceToSpawn = GameConstants.MIN_OBSTACLE_DISTANCE * (1f + difficultyMultiplier * 0.1f)
 
         val shouldSpawn = obstacleSpawnTimer >= spawnRate &&
                 movedObstacles.size < 3 &&
-                (rightmostObstacleX == 0f || 800f - rightmostObstacleX >= GameConstants.MIN_OBSTACLE_DISTANCE)
+                (rightmostObstacle == null || (screenWidth + spawnOffset) - rightmostObstacleX >= minDistanceToSpawn)
 
         val nextObstacles = if (shouldSpawn) {
             obstacleSpawnTimer = 0
-            lastObstacleX = 800f
 
             val type = if (state.score >= 700) {
                 val birdChance = (state.score / 1500f).coerceIn(0.0f, 0.4f)
@@ -54,7 +56,7 @@ class GameEngineImpl : GameEngineRepository {
             }
 
             val newObstacle = Obstacle(
-                x = 800f,
+                x = screenWidth + spawnOffset,
                 y = obstacleY,
                 width = GameConstants.OBSTACLE_WIDTH,
                 height = GameConstants.OBSTACLE_HEIGHT,
@@ -71,7 +73,6 @@ class GameEngineImpl : GameEngineRepository {
         val dinoCollisionBufferY = updatedDino.height * 0.15f
 
         val collision = nextObstacles.any { obstacle ->
-            // Dino collision box
             val dinoLeft = updatedDino.x + dinoCollisionBufferX
             val dinoRight = updatedDino.x + updatedDino.width - dinoCollisionBufferX
             val dinoTop = updatedDino.y + dinoCollisionBufferY

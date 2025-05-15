@@ -14,9 +14,6 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
-import com.dotlottie.dlplayer.Mode
-import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
-import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.example.dino.core.R as AppR
 import entity.ObstacleType
 
@@ -43,16 +40,18 @@ class AndroidObstacleAnimator : ObstacleAnimator {
                             .fillMaxSize()
                             .scale(3f)
                     ) {
-                        DotLottieAnimation(
-                            source = DotLottieSource.Url("https://lottie.host/5ff24962-bbc0-44d2-a77c-0e5581082994/gcOArAua8y.lottie"),
-                            autoplay = true,
-                            loop = true,
-                            speed = 3f,
-                            useFrameInterpolation = false,
-                            playMode = Mode.FORWARD,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Transparent)
+                        val composition by rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(AppR.raw.tree)
+                        )
+                        val progress by animateLottieCompositionAsState(
+                            composition,
+                            iterations = LottieConstants.IterateForever
+                        )
+
+                        LottieAnimation(
+                            composition = composition,
+                            progress = { progress },
+                            modifier = modifier
                         )
                     }
                 }

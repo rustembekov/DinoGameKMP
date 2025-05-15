@@ -30,7 +30,7 @@ import entity.ObstacleType
 import com.example.dino.core.R as AppR
 
 @Composable
-fun GameCanvas(
+fun GameCanvasAndroid(
     state: GameState,
     onJump: () -> Unit,
     onRestart: () -> Unit
@@ -269,7 +269,7 @@ private fun GameCanvasPreview() {
         groundHeight = GameConstants.GROUND_HEIGHT
     )
 
-    GameCanvas(
+    GameCanvasAndroid(
         state = mockState,
         onJump = {},
         onRestart = {}
