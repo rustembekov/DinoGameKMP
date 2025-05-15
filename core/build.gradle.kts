@@ -21,11 +21,8 @@ kotlin {
             dependencies {
                 implementation(libs.lottie.compose)
                 implementation("com.github.LottieFiles:dotlottie-android:0.5.0")
-
                 implementation(libs.androidx.ui.tooling)
                 implementation(libs.compose.ui.tooling.preview)
-
-
             }
         }
         val desktopMain by getting

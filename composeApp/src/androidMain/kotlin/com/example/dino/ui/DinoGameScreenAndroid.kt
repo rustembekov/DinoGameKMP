@@ -13,7 +13,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import ui.GameCanvas
+import ui.GameCanvasAndroid
 import viewmodel.GameIntent
 import viewmodel.GameViewModelInterface
 
@@ -43,7 +43,7 @@ fun DinoGameScreenAndroid(viewModel: GameViewModelInterface) {
         }
     }
 
-    GameCanvas(
+    GameCanvasAndroid(
         state = state,
         onJump = { controller.onJump() },
         onRestart = { viewModel.onIntent(GameIntent.Reset) }
