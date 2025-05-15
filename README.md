@@ -2,7 +2,7 @@
 
 A cross-platform remake of the classic Chrome Dino game built with **Kotlin Multiplatform**, **Jetpack Compose**, and **Compose Multiplatform**. Run, jump, and dodge cacti on Android and Desktop — all from a single codebase.
 
-![DinoGame](https://github.com/rustembekov/DinoGameKMP/raw/main/assets/screenshot.png)
+![DinoGame](https://github.com/rustembekov/DinoGameKMP/blob/main/core/src/main/assets/game_screen.png)
 
 ---
 
