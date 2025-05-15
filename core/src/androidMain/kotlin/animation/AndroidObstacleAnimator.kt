@@ -2,18 +2,18 @@ package animation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
-import com.dotlottie.dlplayer.Mode
-import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
-import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.example.dino.core.R as AppR
 import entity.ObstacleType
 
@@ -21,7 +21,6 @@ class AndroidObstacleAnimator : ObstacleAnimator {
     @Composable
     override fun Obstacle(modifier: Modifier, type: ObstacleType) {
         if (LocalInspectionMode.current) {
-
             val color = when (type) {
                 ObstacleType.TREE -> Color(0xFF8B4513) // Brown for tree
                 ObstacleType.BIRD -> Color(0xFF4682B4) // Blue for bird
@@ -32,15 +31,30 @@ class AndroidObstacleAnimator : ObstacleAnimator {
 
         when (type) {
             ObstacleType.TREE -> {
-                DotLottieAnimation(
-                    source = DotLottieSource.Url("https://lottie.host/5ff24962-bbc0-44d2-a77c-0e5581082994/gcOArAua8y.lottie"),
-                    autoplay = true,
-                    loop = true,
-                    speed = 3f,
-                    useFrameInterpolation = false,
-                    playMode = Mode.FORWARD,
-                    modifier = Modifier.background(Color.LightGray)
-                )
+                Box(
+                    modifier = modifier.background(Color.Transparent),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .scale(3f)
+                    ) {
+                        val composition by rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(AppR.raw.tree)
+                        )
+                        val progress by animateLottieCompositionAsState(
+                            composition,
+                            iterations = LottieConstants.IterateForever
+                        )
+
+                        LottieAnimation(
+                            composition = composition,
+                            progress = { progress },
+                            modifier = modifier
+                        )
+                    }
+                }
             }
 
             ObstacleType.BIRD -> {
@@ -60,9 +74,7 @@ class AndroidObstacleAnimator : ObstacleAnimator {
             }
         }
     }
-
 }
-
 
 @Preview(showBackground = true)
 @Composable

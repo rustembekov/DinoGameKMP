@@ -1,10 +1,8 @@
 package animation
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.airbnb.lottie.compose.*
 import com.example.dino.core.R as AppR
@@ -21,7 +19,6 @@ class AndroidDinoAnimator : DinoAnimator {
             composition = composition,
             progress = { progress },
             modifier = modifier
-                .background(Color.Green)
         )
     }
 }

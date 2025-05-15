@@ -15,17 +15,18 @@ import viewmodel.GameViewModelInterface
 @Composable
 fun DinoGameScreenDesktop(viewModel: GameViewModelInterface) {
     val state by viewModel.state.collectAsState()
+
     val controller = remember { GameController(viewModel, InputController()) }
 
     LaunchedEffect(Unit) {
         controller.bindInputs()
         while (isActive) {
             viewModel.onIntent(GameIntent.Update)
-            delay(16L)
+            delay(GameConstants.FRAME_DELAY)
         }
     }
 
-    GameCanvas(
+    GameCanvasDesktop(
         state = state,
         onJump = { controller.onJump() },
         onRestart = { viewModel.onIntent(GameIntent.Reset) }

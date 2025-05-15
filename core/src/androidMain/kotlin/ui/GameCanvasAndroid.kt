@@ -13,6 +13,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,9 +27,10 @@ import entity.Dino
 import entity.GameState
 import entity.Obstacle
 import entity.ObstacleType
+import com.example.dino.core.R as AppR
 
 @Composable
-fun GameCanvas(
+fun GameCanvasAndroid(
     state: GameState,
     onJump: () -> Unit,
     onRestart: () -> Unit
@@ -143,13 +145,19 @@ fun GameCanvas(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                "Score: ${state.score}",
+                text = stringResource(
+                    id = AppR.string.score_text,
+                    formatArgs = arrayOf(state.score)
+                ),
                 fontSize = 28.sp,
                 color = Color(0xFF212121),
                 fontWeight = FontWeight.Bold
             )
             Text(
-                "High Score: ${state.highScore}",
+                text  = stringResource(
+                    id = AppR.string.high_score_text,
+                    formatArgs = arrayOf(state.highScore)
+                ),
                 fontSize = 20.sp,
                 color = Color(0xFF616161),
                 fontWeight = FontWeight.Medium
@@ -159,7 +167,10 @@ fun GameCanvas(
         if (state.dino.isJumping) {
             val jumpHeightPercent = (state.dino.y / screenHeight * 100).toInt()
             Text(
-                text = "Jump: $jumpHeightPercent%",
+                text = stringResource(
+                    id = AppR.string.jump,
+                    formatArgs = arrayOf(jumpHeightPercent)
+                ),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 24.dp, end = 24.dp),
@@ -181,7 +192,7 @@ fun GameCanvas(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "GAME OVER",
+                        text = stringResource(AppR.string.game_over),
                         color = Color.White,
                         fontSize = 40.sp,
                         fontWeight = FontWeight.ExtraBold,
@@ -189,7 +200,10 @@ fun GameCanvas(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Score: ${state.score}",
+                        text = stringResource(
+                            id = AppR.string.score_text,
+                            formatArgs = arrayOf(state.score)
+                        ),
                         color = Color.White,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Medium,
@@ -205,7 +219,7 @@ fun GameCanvas(
                             .padding(horizontal = 36.dp, vertical = 18.dp)
                     ) {
                         Text(
-                            text = "Tap to Restart",
+                            text = stringResource(AppR.string.restart),
                             color = Color.White,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold
@@ -222,7 +236,7 @@ fun GameCanvas(
 private fun GameCanvasPreview() {
     val mockDino = Dino(
         x = 100f,
-        y = 50f,  // Show dino mid-jump in preview
+        y = 50f,
         velocityY = 10f,
         width = GameConstants.DINO_WIDTH,
         height = GameConstants.DINO_HEIGHT,
@@ -255,7 +269,7 @@ private fun GameCanvasPreview() {
         groundHeight = GameConstants.GROUND_HEIGHT
     )
 
-    GameCanvas(
+    GameCanvasAndroid(
         state = mockState,
         onJump = {},
         onRestart = {}
